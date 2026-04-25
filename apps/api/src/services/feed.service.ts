@@ -4,45 +4,16 @@
  * @use Called from gRPC handlers (e.g. `feed.handler.ts`) and sometimes other services.
  */
 
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { desc, eq, inArray } from "drizzle-orm";
 import { db, schema } from "../db";
+import { enrichPostsWithMetrics } from "./post-metrics.service";
 
-const { posts, users, likes, comments, follows } = schema;
+const { posts, users, follows } = schema;
 
 interface FeedOptions {
 	limit?: number;
 	offset?: number;
 	userId?: string;
-}
-
-async function getPostCounts(postId: string, userId?: string) {
-	const likesResult = await db
-		.select({ count: sql<number>`count(*)` })
-		.from(likes)
-		.where(eq(likes.postId, postId))
-		.get();
-
-	const commentsResult = await db
-		.select({ count: sql<number>`count(*)` })
-		.from(comments)
-		.where(eq(comments.postId, postId))
-		.get();
-
-	let isLiked = false;
-	if (userId) {
-		const likeStatus = await db
-			.select()
-			.from(likes)
-			.where(and(eq(likes.postId, postId), eq(likes.userId, userId)))
-			.get();
-		isLiked = !!likeStatus;
-	}
-
-	return {
-		likeCount: likesResult?.count || 0,
-		commentCount: commentsResult?.count || 0,
-		isLiked,
-	};
 }
 
 export async function getHomeFeed(userId: string, options: FeedOptions = {}) {
@@ -84,14 +55,7 @@ export async function getHomeFeed(userId: string, options: FeedOptions = {}) {
 		.limit(limit)
 		.offset(offset);
 
-	const postsWithCounts = await Promise.all(
-		result.map(async (post) => {
-			const counts = await getPostCounts(post.id, userId);
-			return { ...post, ...counts };
-		}),
-	);
-
-	return postsWithCounts;
+	return enrichPostsWithMetrics(result, userId);
 }
 
 export async function getExploreFeed(options: FeedOptions = {}) {
@@ -117,12 +81,5 @@ export async function getExploreFeed(options: FeedOptions = {}) {
 		.limit(limit)
 		.offset(offset);
 
-	const postsWithCounts = await Promise.all(
-		result.map(async (post) => {
-			const counts = await getPostCounts(post.id, options.userId);
-			return { ...post, ...counts };
-		}),
-	);
-
-	return postsWithCounts;
+	return enrichPostsWithMetrics(result, options.userId);
 }

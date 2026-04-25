@@ -13,7 +13,6 @@ import { LoadingSpinner } from "../../components/shared/LoadingSpinner";
 import { FollowButton } from "../../components/users/FollowButton";
 import { UserAvatar } from "../../components/users/UserAvatar";
 import { getCurrentUser } from "../../server/functions/auth";
-import { getFollowerCount, getFollowingCount } from "../../server/functions/follows";
 import { getUserPosts } from "../../server/functions/posts";
 import { getUser } from "../../server/functions/users";
 import {
@@ -174,8 +173,6 @@ function UserProfilePage() {
 	const [user, setUser] = useState<any>(null);
 	const [posts, setPosts] = useState<any[]>([]);
 	const [currentUser, setCurrentUser] = useState<any>(null);
-	const [followerCount, setFollowerCount] = useState(0);
-	const [followingCount, setFollowingCount] = useState(0);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -184,18 +181,14 @@ function UserProfilePage() {
 
 	const loadData = async () => {
 		try {
-			const [profileUser, userPosts, currentU, followers, following] = await Promise.all([
+			const [profileUser, userPosts, currentU] = await Promise.all([
 				getUser({ data: username }),
 				getUserPosts({ data: username }),
 				getCurrentUser(),
-				getFollowerCount({ data: username }),
-				getFollowingCount({ data: username }),
 			]);
 			setUser(profileUser);
 			setPosts(userPosts);
 			setCurrentUser(currentU);
-			setFollowerCount(followers);
-			setFollowingCount(following);
 		} catch (error) {
 			console.error("Failed to load profile:", error);
 		} finally {
@@ -255,11 +248,11 @@ function UserProfilePage() {
 					<div {...stylex.props(styles.stats)}>
 						<div {...stylex.props(styles.statItem)}>
 							<Users size={16} {...stylex.props(styles.iconGray)} />
-							<span {...stylex.props(styles.statValue)}>{followingCount}</span>
+							<span {...stylex.props(styles.statValue)}>{user.followingCount}</span>
 							<span {...stylex.props(styles.statLabel)}>Following</span>
 						</div>
 						<div {...stylex.props(styles.statItem)}>
-							<span {...stylex.props(styles.statValue)}>{followerCount}</span>
+							<span {...stylex.props(styles.statValue)}>{user.followerCount}</span>
 							<span {...stylex.props(styles.statLabel)}>Followers</span>
 						</div>
 					</div>

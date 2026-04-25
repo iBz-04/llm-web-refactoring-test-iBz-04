@@ -1,11 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-	createPost,
-	loginAs,
-	TEST_USERS,
-	uniqueId,
-	waitForHydration,
-} from "./fixtures/test-helpers";
+import { createPost, loginAs, uniqueId, waitForHydration } from "./fixtures/test-helpers";
 
 test.describe("Notifications - Comprehensive", () => {
 	test.describe("Notification Bell", () => {
@@ -368,9 +362,6 @@ test.describe("Notifications - Comprehensive", () => {
 		test("should update unread count after marking as read", async ({ page }) => {
 			await loginAs(page, "alice");
 
-			// Check initial unread count if badge is visible
-			const badge = page.locator('a[title="Notifications"] span').filter({ hasText: /^\d+$/ });
-
 			// Go to notifications and mark all as read
 			await page.goto("/notifications", { waitUntil: "networkidle" });
 			await waitForHydration(page);
@@ -381,7 +372,7 @@ test.describe("Notifications - Comprehensive", () => {
 				await waitForHydration(page);
 			}
 
-			// Badge should be updated or hidden
+			// Badge should be updated or hidden after returning to home
 			await page.goto("/", { waitUntil: "networkidle" });
 			await waitForHydration(page);
 		});

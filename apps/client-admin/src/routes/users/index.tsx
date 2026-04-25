@@ -258,6 +258,17 @@ const mockUsers = [
 		postCount: 0,
 		joinedAt: "2026-01-27",
 	},
+	{
+		id: "7",
+		username: "spammer",
+		displayName: "Banned Spammer",
+		email: "spammer@test.com",
+		avatarUrl: null,
+		role: "user" as const,
+		status: "banned" as const,
+		postCount: 5,
+		joinedAt: "2026-01-15",
+	},
 ];
 
 function UsersPage() {
@@ -340,7 +351,7 @@ function UsersPage() {
 								<td {...stylex.props(styles.td)}>
 									<span
 										{...stylex.props(
-											user.status === "active" ? styles.statusActive : styles.statusBanned,
+											user.status === "banned" ? styles.statusBanned : styles.statusActive,
 										)}
 									>
 										{user.status === "banned" ? "Banned" : "Active"}
