@@ -6,6 +6,7 @@
 
 import { and, desc, eq, sql } from "drizzle-orm";
 import { db, schema } from "../db";
+import { AppError } from "../grpc/errors";
 import { generateId } from "./utils";
 
 const { notifications, users, posts, comments } = schema;
@@ -128,11 +129,11 @@ export async function markAsRead(notificationId: string, userId: string) {
 		.get();
 
 	if (!notification) {
-		throw new Error("Notification not found");
+		throw new AppError("Notification not found", "NOT_FOUND");
 	}
 
 	if (notification.userId !== userId) {
-		throw new Error("Unauthorized");
+		throw new AppError("Unauthorized", "PERMISSION_DENIED");
 	}
 
 	await db.update(notifications).set({ read: true }).where(eq(notifications.id, notificationId));
@@ -160,11 +161,11 @@ export async function deleteNotification(notificationId: string, userId: string)
 		.get();
 
 	if (!notification) {
-		throw new Error("Notification not found");
+		throw new AppError("Notification not found", "NOT_FOUND");
 	}
 
 	if (notification.userId !== userId) {
-		throw new Error("Unauthorized");
+		throw new AppError("Unauthorized", "PERMISSION_DENIED");
 	}
 
 	await db.delete(notifications).where(eq(notifications.id, notificationId));

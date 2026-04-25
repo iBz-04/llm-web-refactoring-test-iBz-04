@@ -144,10 +144,11 @@ export function uniqueId(prefix = "test"): string {
 }
 
 /**
- * Accept browser dialog (confirm/alert)
+ * Accept browser dialog (confirm/alert).
+ * Removes the handler after the first dialog to avoid listener buildup across tests.
  */
 export function setupDialogHandler(page: Page, action: "accept" | "dismiss" = "accept"): void {
-	page.on("dialog", (dialog) => {
+	page.once("dialog", (dialog) => {
 		if (action === "accept") {
 			dialog.accept();
 		} else {

@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test";
 import { createPost, loginAs, uniqueId, waitForHydration } from "./fixtures/test-helpers";
 
 test.describe("Notifications - Comprehensive", () => {
+	test.describe.configure({ mode: "serial" });
+
 	test.describe("Notification Bell", () => {
 		test("should display notification bell in header when logged in", async ({ page }) => {
 			await loginAs(page, "alice");

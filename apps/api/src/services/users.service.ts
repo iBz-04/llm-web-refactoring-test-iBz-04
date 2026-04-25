@@ -6,6 +6,7 @@
 
 import { and, eq, sql } from "drizzle-orm";
 import { db, schema } from "../db";
+import { AppError } from "../grpc/errors";
 
 const { users, follows, posts } = schema;
 
@@ -33,7 +34,7 @@ export async function getUser(username: string, requesterId?: string) {
 		.get();
 
 	if (!user) {
-		throw new Error("User not found");
+		throw new AppError("User not found", "NOT_FOUND");
 	}
 
 	// Get follower count
