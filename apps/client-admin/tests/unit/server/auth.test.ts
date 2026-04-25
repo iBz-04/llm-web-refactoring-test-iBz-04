@@ -112,6 +112,7 @@ describe("Admin Auth Server Functions", () => {
 				userId: "user-123",
 				username: "adminuser",
 				role: "admin",
+				sessionToken: "session-token-123",
 			});
 		});
 
@@ -259,6 +260,7 @@ describe("Admin Auth Server Functions", () => {
 				userId: "user-123",
 				username: "adminuser",
 				role: "admin",
+				sessionToken: "session-token-123",
 			});
 			vi.mocked(getAdminGrpcSessionToken).mockResolvedValue("session-token-123");
 
@@ -301,6 +303,7 @@ describe("Admin Auth Server Functions", () => {
 				userId: "user-123",
 				username: "adminuser",
 				role: "admin",
+				sessionToken: "session-token-123",
 			});
 			vi.mocked(getAdminGrpcSessionToken).mockResolvedValue(undefined as unknown as string);
 			vi.mocked(clearAdminSessionData).mockResolvedValue(undefined);
@@ -316,6 +319,7 @@ describe("Admin Auth Server Functions", () => {
 				userId: "user-123",
 				username: "adminuser",
 				role: "admin",
+				sessionToken: "session-token-123",
 			});
 			vi.mocked(getAdminGrpcSessionToken).mockResolvedValue("session-token-123");
 
@@ -348,6 +352,7 @@ describe("Admin Auth Server Functions", () => {
 				userId: "user-123",
 				username: "adminuser",
 				role: "admin",
+				sessionToken: "session-token-123",
 			});
 			vi.mocked(getAdminGrpcSessionToken).mockResolvedValue("session-token-123");
 
@@ -373,6 +378,7 @@ describe("Admin Auth Server Functions", () => {
 				userId: "user-123",
 				username: "adminuser",
 				role: "admin",
+				sessionToken: "session-token-123",
 			});
 
 			const result = await callCheckAdminAuth();
@@ -395,6 +401,7 @@ describe("Admin Auth Server Functions", () => {
 				userId: "user-456",
 				username: "moduser",
 				role: "moderator",
+				sessionToken: "session-token-123",
 			});
 
 			const result = await callCheckAdminAuth();

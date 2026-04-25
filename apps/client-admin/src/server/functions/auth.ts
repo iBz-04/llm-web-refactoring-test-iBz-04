@@ -49,6 +49,7 @@ export const loginAdmin = createServerFn({ method: "POST" })
 			userId: loginResponse.userId,
 			username: validateResponse.username,
 			role: role as "admin" | "moderator",
+			sessionToken: loginResponse.sessionToken,
 		});
 
 		return { success: true, userId: loginResponse.userId, role };
