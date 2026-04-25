@@ -161,6 +161,32 @@ describe("AuthService", () => {
 		});
 	});
 
+	describe("Password Security", () => {
+		it("proves the legacy vulnerability existed (identical passwords yield identical hashes)", () => {
+			const pass = "common-password";
+			const hash1 = legacySha256PasswordHash(pass);
+			const hash2 = legacySha256PasswordHash(pass);
+			
+			// This proves the vulnerability: no per-user salt means identical hashes,
+			// allowing rainbow table attacks.
+			expect(hash1).toBe(hash2);
+			expect(hash1).not.toContain("$"); // Not a PHC format
+		});
+
+		it("proves the vulnerability is resolved (Argon2id yields unique hashes for identical passwords)", async () => {
+			const { hashPassword } = await import("./utils");
+			const pass = "common-password";
+			const hash1 = await hashPassword(pass);
+			const hash2 = await hashPassword(pass);
+			
+			// This proves the fix: Argon2id generates a unique salt per hash,
+			// so identical passwords yield different hashes.
+			expect(hash1).not.toBe(hash2);
+			expect(isArgon2idPasswordHash(hash1)).toBe(true);
+			expect(isArgon2idPasswordHash(hash2)).toBe(true);
+		});
+	});
+
 	describe("getCurrentUser", () => {
 		it("returns user data for valid userId", async () => {
 			const testUser = await createTestUser({
